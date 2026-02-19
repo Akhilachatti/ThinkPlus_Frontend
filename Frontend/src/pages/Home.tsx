@@ -9,10 +9,38 @@ const Home = () => {
   const [progress, setProgress] = useState<any>(null);
   const [recommendation, setRecommendation] = useState<any>(null);
 
+  // Calculate stats from progress data
+  const getTotalAttempts = () => progress?.attempts?.length || 0;
+  
+  const getAverageScore = () => {
+    if (!progress?.attempts || progress.attempts.length === 0) return 0;
+    const total = progress.attempts.reduce((sum: number, attempt: any) => sum + attempt.score, 0);
+    return (total / progress.attempts.length).toFixed(2);
+  };
+
   useEffect(() => {
-    API.get("/progress").then((res) => setProgress(res.data));
-    API.get("/recommendation").then((res) => setRecommendation(res.data));
+    const fetchData = async () => {
+      try {
+        const [progressRes, recommendationRes] = await Promise.all([
+          API.get("/progress"),
+          API.get("/recommendation")
+        ]);
+        setProgress(progressRes.data);
+        setRecommendation(recommendationRes.data);
+      } catch (error) {
+        console.error("Failed to fetch home data:", error);
+      }
+    };
+    fetchData();
   }, []);
+
+  // Log data for debugging
+  useEffect(() => {
+    if (progress || recommendation) {
+      console.log("Progress:", progress);
+      console.log("Recommendation:", recommendation);
+    }
+  }, [progress, recommendation]);
 
   return (
     <div className="page-container">
@@ -25,18 +53,18 @@ const Home = () => {
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="stat-card">
             <p className="text-sm text-muted-foreground uppercase tracking-wide mb-1">Total Attempts</p>
-            <p className="text-4xl font-bold font-display text-foreground">{progress.totalAttempts}</p>
+            <p className="text-4xl font-bold font-display text-foreground">{getTotalAttempts()}</p>
           </div>
 
           <div className="stat-card">
             <p className="text-sm text-muted-foreground uppercase tracking-wide mb-1">Average Score</p>
-            <p className="text-4xl font-bold font-display text-primary">{progress.averageScore.toFixed(2)}%</p>
+            <p className="text-4xl font-bold font-display text-primary">{getAverageScore()}%</p>
           </div>
 
           {recommendation && (
             <div className="stat-card">
               <p className="text-sm text-muted-foreground uppercase tracking-wide mb-1">Current Level</p>
-              <p className="text-4xl font-bold font-display text-secondary">{recommendation.currentLevel}</p>
+              <p className="text-4xl font-bold font-display text-secondary">{recommendation?.currentLevel}</p>
             </div>
           )}
         </div>

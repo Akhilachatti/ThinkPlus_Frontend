@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://thinkplus-backend-w88k.onrender.com/api",
+  // baseURL: "https://thinkplus-backend-w88k.onrender.com/api",
+  baseURL:"http://localhost:5000/api",
 });
 
 API.interceptors.request.use((config) => {

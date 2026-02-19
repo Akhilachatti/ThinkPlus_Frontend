@@ -11,7 +11,7 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const res = await API.post("/users/login", form);
-      localStorage.setItem("user", JSON.stringify(res.data));
+      login(res.data); // ✅ Add this line
       navigate("/home");
     } catch (error: any) {
       alert(error.response?.data?.message || "Login failed");
