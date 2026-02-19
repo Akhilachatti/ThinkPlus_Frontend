@@ -1,6 +1,6 @@
 import { useState } from "react";
 import API from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Signup = () => {
   const [form, setForm] = useState<Record<string, string>>({});
@@ -51,9 +51,9 @@ const Signup = () => {
 
         <p className="text-center text-muted-foreground mt-6">
           Already have account?{" "}
-          <a href="/login" className="text-primary font-semibold hover:underline">
+          <Link to="/login" className="text-primary font-semibold hover:underline">
             Login
-          </a>
+          </Link>
         </p>
       </div>
     </div>
